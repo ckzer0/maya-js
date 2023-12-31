@@ -1,4 +1,4 @@
-import { MAYA } from "../../../maya";
+import { MAYA } from "../../../lib/maya";
 
 export const TextBox = ({ onkeypress }) => {
   return MAYA.Input({

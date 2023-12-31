@@ -1,59 +1,36 @@
-import { MAYA } from "../../maya";
+import { MAYA, Mutate } from "../../lib/maya";
+import { Dispatch, State } from "../../lib/store";
 import { Button, TextBox, Todos } from "./components";
 
-export const App = ({ context, updateContext }) => {
+export const App = (firstRenderprops) => {
+  const { todos } = firstRenderprops;
   let textbox;
   let addTodo;
 
-  const state = {
-    textBoxText: "",
-  };
-
-  const onTodoDelete = (id) => {
-    const newTodos = context.initialTodos.filter((todo) => todo.id !== id);
-    const updatedContext = {
-      ...context,
-      initialTodos: newTodos,
-    };
-    updateContext(updatedContext);
-    console.log(context.initialTodos);
-  };
-
-  const onTextChange = (e) => {
-    if (e.key === "Enter") {
-      addTodoTask();
-      return;
-    }
-
-    state.textBoxText = e.target.value;
-  };
-
-  const addTodoTask = () => {
-    addTodo(state.textBoxText);
-    textbox.value = "";
-  };
-
-  return MAYA.Div({
+  const initialRender = MAYA.Div({
     children: [
       MAYA.Div({
         classNames: "mb2",
         children: [
           (textbox = TextBox({
-            onkeypress: onTextChange,
+            onkeypress: (keyEvent) => Dispatch("UPDATE_SEARCH_TEXT", keyEvent),
           })),
           Button({
             label: "add todo",
-            onclick: addTodoTask,
+            onclick: () => Dispatch("ADD_TODO", State.searchText),
           }),
         ],
       }),
-      ({
-        emitted: { addTodo },
-      } = Todos({
+      Todos({
         title: "Your todos list",
-        todos: context.initialTodos,
-        onDelete: onTodoDelete,
-      })),
+        todos: todos,
+      }),
     ],
   });
+
+  Mutate(textbox.mayaId, "CLEAR_SEARCH_TEXT", () => {
+    textbox.value = "";
+  });
+
+  return initialRender;
 };

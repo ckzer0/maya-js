@@ -1,4 +1,4 @@
-import { MAYA } from "../../../maya";
+import { MAYA } from "../../../lib/maya";
 
 export const Header = ({ title }) =>
   MAYA.H2({
