@@ -1,4 +1,4 @@
-import { App } from "./view/app";
+import { App } from "./view/appV1/app";
 
 const runApp = () => {
   const initialTodos = [

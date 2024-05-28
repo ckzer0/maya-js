@@ -1,5 +1,4 @@
-import { MAYA, Mutate } from "../../../../lib/maya";
-import { Dispatch } from "../../../../lib/store";
+import { MAYA, Mutate } from "../../../../../lib/maya";
 import { Header } from "../header";
 import { TodoTile } from "./todo-tile";
 

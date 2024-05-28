@@ -1,5 +1,5 @@
-import { MAYA, Mutate } from "../../lib/maya";
-import { Dispatch, State } from "../../lib/store";
+import { MAYA, Mutate } from "../../../lib/maya";
+import { Dispatch, State } from "../../../lib/store";
 import { Button, TextBox, Todos } from "./components";
 
 export const App = (firstRenderprops) => {

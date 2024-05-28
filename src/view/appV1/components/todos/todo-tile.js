@@ -1,5 +1,5 @@
-import { MAYA, Mutate } from "../../../../lib/maya";
-import { Dispatch } from "../../../../lib/store";
+import { MAYA, Mutate } from "../../../../../lib/maya";
+import { Dispatch } from "../../../../../lib/store";
 
 export const TodoTile = (firstRenderprops) => {
   const { task, isLast } = firstRenderprops;
