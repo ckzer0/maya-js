@@ -1,12 +1,12 @@
 import { htmlTagNames } from "./constants";
 import { createEl } from "./core";
 
-export const MAYA = {};
+export const m = {};
 
 htmlTagNames.forEach((tagName) => {
   const mayaTag = tagName
     .split("")
     .map((char, index) => (!index ? char.toUpperCase() : char))
     .join("");
-  MAYA[mayaTag] = (props) => createEl(tagName, props);
+  m[mayaTag] = (props) => createEl(tagName, props);
 });

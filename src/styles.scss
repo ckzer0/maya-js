@@ -1,3 +1,13 @@
+.inline-block {
+  display: inline-block;
+}
+
+.grid3x3 {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: 2rem;
+}
+
 .h1 {
   height: 16px;
 }
