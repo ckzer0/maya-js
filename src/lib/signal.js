@@ -11,19 +11,34 @@ export class Signal {
     this._subscribers.push(mayaComp);
   }
 
+  removeSubscribers(deadSubscribers) {
+    this._subscribers = this._subscribers.filter(
+      (comp) => !deadSubscribers.includes(comp)
+    );
+  }
+
   value(composer) {
-    return composer ? composer(this._value) : this._value;
+    const value = composer ? composer(this._value) : this._value;
+    return value;
   }
 
   set(newValue) {
     console.log("setting new value", newValue);
     this._value = newValue;
     this._subscribers.forEach((comp) => {
-      comp.dispatchEvent(
-        new CustomEvent("signalChange", {
-          detail: { signalId: this.id },
-        })
-      );
+      const deadNodes = [];
+      if (document.body.contains(comp)) {
+        comp.dispatchEvent(
+          new CustomEvent("signalChange", {
+            detail: { signalId: this.id },
+          })
+        );
+      } else {
+        deadNodes.push(comp);
+        console.log(deadNodes);
+      }
+
+      this.removeSubscribers(deadNodes);
     });
   }
 }

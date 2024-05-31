@@ -1,4 +1,4 @@
-import { m, signal } from "../../lib";
+import { classes, innerText, m, signal } from "../../lib";
 import { GridBoard } from "./components/GridBoard";
 
 export const App = () => {
@@ -15,13 +15,9 @@ export const App = () => {
     firstPlayerTurn.set(!firstPlayerTurn());
   };
 
-  return m.Div({
-    classNames: "ph4",
-    children: [
-      m.H1({
-        children: "Tic Tac Toe",
-      }),
-      GridBoard({ firstPlayerTurn, moves, onMove }),
-    ],
-  });
+  return m.Div(
+    classes("ph4"),
+    m.H1(innerText("Tic Tac Toe")),
+    GridBoard({ firstPlayerTurn, moves, onMove })
+  );
 };

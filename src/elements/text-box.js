@@ -1,10 +1,9 @@
-import { m } from "../lib";
+import { classes, m, on, attribs } from "../lib";
 
 export const TextBox = ({ classNames = "", value, onkeypress }) => {
-  return m.Input({
-    type: "text",
-    value: value,
-    onkeypress: onkeypress,
-    classNames: `pa3 br3 bw1 ba b--green ${classNames}`,
-  });
+  return m.Input(
+    classes(`pa3 br3 bw1 ba b--green ${classNames}`),
+    attribs({ type: "text", value: value }),
+    on.keypress(onkeypress)
+  );
 };

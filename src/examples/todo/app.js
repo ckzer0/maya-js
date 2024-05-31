@@ -1,4 +1,4 @@
-import { m, signal } from "../../lib";
+import { classes, m, on, attribs, signal } from "../../lib";
 import { Button, Header, TextBox } from "../../elements";
 import { Todos } from "./components";
 
@@ -12,35 +12,26 @@ export const App = () => {
   ]);
 
   const addTodo = () => {
-    tasks.set([...tasks(), { text: searchText(), isDone: false }]);
+    if (searchText())
+      tasks.set([...tasks(), { text: searchText(), isDone: false }]);
     searchText.set("");
   };
 
-  return m.Div({
-    children: [
-      Header({ title: "Todo App", variant: "large" }),
-      m.Div({
-        classNames: "mb2",
-        children: [
-          TextBox({
-            classNames: "m3",
-            value: searchText,
-            onkeypress: (keyEvent) => {
-              if (keyEvent.key === "Enter") addTodo();
-              else searchText.set(keyEvent.target.value + keyEvent.key);
-            },
-          }),
-          Button({
-            label: "add todo",
-            onclick: addTodo,
-          }),
-        ],
+  return m.Div(
+    classes("ph3"),
+    Header({ title: "Todo App", variant: "large" }),
+    m.Div(
+      classes("mb2"),
+      TextBox({
+        classNames: "mb2 mr3",
+        value: searchText,
+        onkeypress: (keyEvent) => {
+          if (keyEvent.key === "Enter") addTodo();
+          else searchText.set(keyEvent.target.value + keyEvent.key);
+        },
       }),
-      Todos({
-        classNames: "m3",
-        title: "tasks list",
-        tasks: tasks,
-      }),
-    ],
-  });
+      Button({ onclick: addTodo, label: "add todo" })
+    ),
+    Todos({ classNames: "mb3", title: "tasks list", tasks })
+  );
 };

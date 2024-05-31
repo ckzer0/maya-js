@@ -1,4 +1,4 @@
-import { m } from "../../../lib";
+import { classes, m, attribs, unfold } from "../../../lib";
 import { Header } from "../../../elements";
 import { TodoTile } from "./todo-tile";
 
@@ -20,28 +20,21 @@ export const Todos = ({ classNames, title, tasks }) => {
     tasks.set(updatedTasks);
   };
 
-  return m.Div({
-    classNames: `border2-light rad15 ${classNames}`,
-    children: [
-      Header({ title }),
-      m.Ul({
-        classNames: `${baseCss} ${paddingCss}`,
-        children: [
-          tasks,
-          (sigValue) => {
-            return sigValue.map((task, i) => {
-              return TodoTile({
-                task: task.text,
-                index: i,
-                isLast: i === tasks().length - 1,
-                isDone: task.isDone,
-                onDoneChange,
-                onDelete,
-              });
-            });
-          },
-        ],
-      }),
-    ],
-  });
+  return m.Div(
+    classes(`border2-light rad15 ${classNames}`),
+    Header({ title }),
+    m.Ul(
+      classes(`${baseCss} ${paddingCss}`),
+      unfold.map(tasks, (task, i) =>
+        TodoTile({
+          task: task.text,
+          index: i,
+          isDone: task.isDone,
+          onDoneChange,
+          onDelete,
+          isLast: i === tasks().length - 1,
+        })
+      )
+    )
+  );
 };

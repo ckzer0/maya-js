@@ -3,13 +3,15 @@ import { eventKeys } from "./constants";
 let elId = 0;
 const getNewId = () => elId++;
 
+export const getProperty = (propKey, propValue) => ({ [propKey]: propValue });
+
 const valueIsSignalTuple = (value) =>
   Array.isArray(value) && value.length === 2 && value[0]?.type === "signal";
 
 const valueIsSignalBased = (value) =>
   value?.type === "signal" || valueIsSignalTuple(value);
 
-const handleSignalBasedProp = (el, attrKey, signalBasedValue, propHandler) => {
+const handleSignalBasedProp = (el, signalBasedValue, propHandler) => {
   const isTuple = valueIsSignalTuple(signalBasedValue);
   const [signal, composer] = isTuple ? signalBasedValue : [signalBasedValue];
   signal.addSubscriber(el);
@@ -17,14 +19,14 @@ const handleSignalBasedProp = (el, attrKey, signalBasedValue, propHandler) => {
     const { signalId } = event.detail;
     if (signalId === signal.id) {
       const attrValue = signal(composer);
-      propHandler(el, attrKey, attrValue);
+      propHandler(el, attrValue);
     }
   });
-  propHandler(el, attrKey, signal(composer));
+  propHandler(el, signal(composer));
 };
 
 const handleAttributeProp = (el, attrKey, attrValue) => {
-  const setAttribute = (el, attrKey, attrValue) => {
+  const setAttribute = (el, attrValue) => {
     if (attrKey === "value") {
       el.value = attrValue;
     } else {
@@ -33,9 +35,9 @@ const handleAttributeProp = (el, attrKey, attrValue) => {
   };
 
   if (valueIsSignalBased(attrValue)) {
-    handleSignalBasedProp(el, attrKey, attrValue, setAttribute);
+    handleSignalBasedProp(el, attrValue, setAttribute);
   } else {
-    setAttribute(el, attrKey, attrValue);
+    setAttribute(el, attrValue);
   }
 };
 
@@ -51,11 +53,15 @@ const handleEventProp = (el, propKey, propValue) => {
 };
 
 const handleChildrenProp = (el, children) => {
-  const appendChildren = (el, _, children) => {
-    el.replaceChildren();
+  const appendChildren = (el, children, replaceChildrenOnSignal = true) => {
+    if (replaceChildrenOnSignal) el.replaceChildren();
     if (Array.isArray(children)) {
       children.forEach((child) => {
-        el.appendChild(child);
+        if (typeof child === "string") {
+          el.innerText = child;
+        } else {
+          el.appendChild(child);
+        }
       });
     } else if (typeof children === "string") {
       el.innerText = children;
@@ -64,29 +70,98 @@ const handleChildrenProp = (el, children) => {
     }
   };
 
-  if (typeof children === "string") {
-    el.innerText = children;
-  } else if (valueIsSignalBased(children)) {
-    handleSignalBasedProp(el, "children", children, appendChildren);
-  } else {
-    appendChildren(el, null, children);
-  }
+  children.forEach((child) => {
+    if (typeof child === "string") {
+      el.innerText = child;
+    } else if (valueIsSignalBased(child)) {
+      console.log("yes it is");
+      handleSignalBasedProp(el, child, appendChildren);
+    } else {
+      appendChildren(el, child, false);
+    }
+  });
 };
 
-export const createEl = (tagName, props) => {
+const getNodesEventsAndAttributes = (...args) => {
+  const children = [];
+  const events = {};
+  const attributes = {};
+
+  args.forEach((arg) => {
+    if (arg.tagName || valueIsSignalBased(arg) || typeof arg === "string") {
+      children.push(arg);
+    } else {
+      if (typeof arg === "object") {
+        const entries = Object.entries(arg);
+        if (entries.length === 1) {
+          const [propKey, propValue] = entries[0];
+
+          if (propKey === "classes") {
+            Object.assign(attributes, { class: propValue });
+          } else if (propKey === "style") {
+            Object.assign(attributes, { style: propValue });
+          } else if (propKey === "attribs") {
+            Object.assign(attributes, propValue);
+          } else if (propKey === "event") {
+            const [eventKey, eventValue] = Object.entries(propValue)[0];
+            if (
+              eventKeys.includes(eventKey) &&
+              typeof eventValue === "function"
+            ) {
+              Object.assign(events, propValue);
+            } else {
+              // console.log(propKey, propValue);
+              throw new Error("Invalid event");
+            }
+          } else {
+            // console.log(propKey);
+            // console.log(propValue);
+            throw new Error("Invalid attribute or event");
+          }
+        } else {
+          console.log(entries);
+          throw new Error("Attribute length is greater than 1");
+        }
+      } else {
+        throw new Error("Invalid prop passed to maya node");
+      }
+    }
+  });
+
+  return { children, events, attributes };
+};
+
+/**
+ * PROPS OF AN ELEMENT
+ *
+ * { "className": "some class" }
+ * { "style": "some: style;" }
+ * {
+ *   "attribs": {
+ *     "type": "text",
+ *     "value": "some value",
+ *   }
+ * }
+ * {
+ *   "event": {
+ *     "onclick": () => console.log("clicked"),
+ *   }
+ * }
+ * [signal, composer]
+ * el
+ */
+export const createEl = (tagName, ...args) => {
   const el = document.createElement(tagName);
   el.mayaId = getNewId();
+  const { children, events, attributes } = getNodesEventsAndAttributes(...args);
 
-  for (const [propKey, propValue] of Object.entries(props)) {
-    if (propKey === "children") {
-      handleChildrenProp(el, propValue);
-    } else if (eventKeys.includes(propKey) && typeof propValue === "function") {
-      handleEventProp(el, propKey, propValue);
-    } else {
-      const attrKey = propKey === "classNames" ? "class" : propKey;
-      handleAttributeProp(el, attrKey, propValue);
-    }
-  }
+  handleChildrenProp(el, children);
+  Object.entries(events).forEach(([eventKey, eventValue]) =>
+    handleEventProp(el, eventKey, eventValue)
+  );
+  Object.entries(attributes).forEach(([attrKey, attrValue]) =>
+    handleAttributeProp(el, attrKey, attrValue)
+  );
 
   return el;
 };
