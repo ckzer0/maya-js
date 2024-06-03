@@ -1,8 +1,10 @@
-// import { App } from "./examples/todo/app";
-import { App } from "./examples/tic-tac-toe/app";
+import { App } from "./examples/todo/app";
+// import { App } from "./examples/tic-tac-toe/app";
 
 const runApp = () => {
-  document.body.appendChild(App());
+  const app = App();
+  // console.log(app.innerHTML);
+  document.body.appendChild(app);
 };
 
 runApp();

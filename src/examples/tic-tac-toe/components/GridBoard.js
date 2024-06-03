@@ -14,10 +14,10 @@ export const GridBoard = ({ firstPlayerTurn, moves, onMove }) => {
   const blocks = Array.from(Array(9).keys());
 
   return m.Div(
-    classes([
+    classes(
       firstPlayerTurn,
-      (s) => `grid3x3 pa4 bg-light-${s ? "green" : "pink"}`,
-    ]),
+      (s) => `grid3x3 pa4 bg-light-${s ? "green" : "pink"}`
+    ),
     ...blocks.map((_, index) => {
       return Block({
         children: [

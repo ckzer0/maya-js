@@ -1,6 +1,7 @@
 import { classes, m, on, attribs, signal } from "../../lib";
 import { Button, Header, TextBox } from "../../elements";
 import { Todos } from "./components";
+import { testAboveMethods } from "../../lib/diff";
 
 export const App = () => {
   const searchText = signal("");
@@ -10,11 +11,13 @@ export const App = () => {
     { text: "khana thoos liya waise", isDone: false },
     { text: "ab kabhi nahi kochenge", isDone: false },
   ]);
+  const tasksTitle = signal(`total taks: ${tasks().length}`);
 
   const addTodo = () => {
     if (searchText())
       tasks.set([...tasks(), { text: searchText(), isDone: false }]);
     searchText.set("");
+    tasksTitle.set(`total taks: ${tasks().length}`);
   };
 
   return m.Div(
@@ -32,6 +35,6 @@ export const App = () => {
       }),
       Button({ onclick: addTodo, label: "add todo" })
     ),
-    Todos({ classNames: "mb3", title: "tasks list", tasks })
+    Todos({ classNames: "mb3", title: tasksTitle, tasks })
   );
 };

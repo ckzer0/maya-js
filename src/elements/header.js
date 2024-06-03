@@ -1,6 +1,15 @@
-import { classes, innerText, m } from "../lib";
+import { classes, from, innerText, m, on, signal } from "../lib";
 
 export const Header = ({ title, variant }) => {
-  const component = variant === "large" ? m.H1 : m.H2;
-  return component(classes(`p2 m2`), innerText(title));
+  const hTag = variant === "large" ? m.H1 : m.H2;
+  const toggle = signal(false);
+  const color = from(toggle).getSignal(() => (toggle() ? "red" : "black"));
+
+  const onTap = () => toggle.set(!toggle());
+
+  return hTag(
+    classes(color, (colSignal) => `pl3 ${colSignal()}`),
+    on.click(onTap),
+    innerText(title)
+  );
 };
