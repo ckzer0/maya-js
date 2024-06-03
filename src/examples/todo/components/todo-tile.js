@@ -1,12 +1,13 @@
+import { derived, signal } from "../../../lib/core";
 import {
   classes,
-  derived,
   innerText,
-  m,
-  on,
-  signal,
+  mButton,
+  mDiv,
+  mSpan,
+  onClick,
   style,
-} from "../../../lib";
+} from "../../../lib/html";
 
 export const TodoTile = ({
   index,
@@ -23,21 +24,21 @@ export const TodoTile = ({
     () => `mt1 pa2 pointer ${!isDone ? bgColor.value + " dark-green" : ""}`
   );
 
-  return m.Div(
+  return mDiv(
     classes(tileClasses),
     style(`${isLast ? plainStyle : styleWithBorder}`),
-    on.click(() => {
+    onClick(() => {
       onDoneChange(index);
       bgColor.value =
         bgColor.value === "bg-light-yellow"
           ? "bg-light-transparent"
           : "bg-light-yellow";
     }),
-    m.Span(classes(isDone ? "strike" : ""), innerText(task)),
-    m.Button(
+    mSpan(classes(isDone ? "strike" : ""), innerText(task)),
+    mButton(
       classes(`mb1`),
       style(`display: inline-block;`),
-      on.click((e) => {
+      onClick((e) => {
         onDelete(index);
         e.stopPropagation();
       }),

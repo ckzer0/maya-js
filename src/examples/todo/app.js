@@ -1,5 +1,6 @@
 import { Button, Header, TextBox } from "../../elements";
-import { classes, derived, m, signal } from "../../lib";
+import { derived, signal } from "../../lib/core";
+import { classes, mDiv } from "../../lib/html";
 import { Todos } from "./components";
 
 export const App = () => {
@@ -18,10 +19,10 @@ export const App = () => {
     searchText.value = "";
   };
 
-  return m.Div(
+  return mDiv(
     classes("ph3"),
     Header({ title: "Todo App", variant: "large" }),
-    m.Div(
+    mDiv(
       classes("mb2"),
       TextBox({
         classNames: "mb2 mr3",

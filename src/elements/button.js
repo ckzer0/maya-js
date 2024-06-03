@@ -1,8 +1,8 @@
-import { classes, innerText, m, on } from "../lib";
+import { classes, innerText, mButton, onClick } from "../lib/html";
 
 export const Button = ({ onclick, label }) =>
-  m.Button(
+  mButton(
     classes(`br3 bg-green white pa3 bn`),
-    on.click(onclick),
+    onClick(onclick),
     innerText(label)
   );

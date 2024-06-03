@@ -1,4 +1,5 @@
-import { classes, derived, m, on } from "../../../lib";
+import { derived } from "../../../lib/core";
+import { classes, mDiv, onClick } from "../../../lib/html";
 
 export const GridBoard = ({
   playerXsTurn,
@@ -15,7 +16,7 @@ export const GridBoard = ({
   const getColorsCss = (player) =>
     `${getTextColor(player)} ${getBgColor(player)}`;
 
-  return m.Div(
+  return mDiv(
     classes(
       derived(
         () =>
@@ -29,22 +30,20 @@ export const GridBoard = ({
       )
     ),
     ...blocks.map((_, index) =>
-      m.Div(
+      mDiv(
         classes(
           derived(
             () =>
-              `flex items-center justify-center tc br3 ba b--gray bg-white f1 b h5 ${
+              `flex items-center mid-gray justify-center tc br3 ba b--gray bg-white f1 b h5 ${
                 winner.value ? "banned" : "pointer"
-              } 
-              ${
+              } ${
                 winCombo.value?.includes(index)
                   ? getColorsCss(winner.value)
                   : ""
-              }
-              `
+              }`
           )
         ),
-        on.click(() => onMove(index)),
+        onClick(() => onMove(index)),
         derived(
           () => moves.value.find((move) => move.index === index)?.player || "•"
         )

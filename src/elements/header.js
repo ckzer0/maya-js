@@ -1,7 +1,8 @@
-import { classes, derived, innerText, m, on, signal } from "../lib";
+import { derived, signal } from "../lib/core";
+import { classes, innerText, mH1, mH2, onClick } from "../lib/html";
 
 export const Header = ({ title, variant }) => {
-  const hTag = variant === "large" ? m.H1 : m.H2;
+  const hTag = variant === "large" ? mH1 : mH2;
   const toggle = signal(false);
   const colorClass = derived(() => (toggle.value ? "pl3 red" : "pl3 black"));
 
@@ -9,5 +10,5 @@ export const Header = ({ title, variant }) => {
     toggle.value = !toggle.value;
   };
 
-  return hTag(classes(colorClass), on.click(onTap), innerText(title));
+  return hTag(classes(colorClass), onClick(onTap), innerText(title));
 };

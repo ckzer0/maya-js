@@ -1,5 +1,6 @@
 import { Header } from "../../../elements";
-import { classes, derived, innerText, m } from "../../../lib";
+import { derived } from "../../../lib/core";
+import { classes, innerText, mDiv, mP, mUl } from "../../../lib/html";
 import { TodoTile } from "./todo-tile";
 
 export const Todos = ({ classNames, title, tasks }) => {
@@ -13,13 +14,13 @@ export const Todos = ({ classNames, title, tasks }) => {
     tasks.value = updatedTasks;
   };
 
-  return m.Div(
+  return mDiv(
     classes(`border2-light rad15 ${classNames}`),
     Header({ title }),
-    m.Div(
+    mDiv(
       classes(`pa3 m2 bcol-lgrey rad10`),
       derived(() =>
-        m.Ul(
+        mUl(
           classes("list pa1 ma0"),
           ...tasks.value.map((task, i) =>
             TodoTile({
@@ -33,7 +34,7 @@ export const Todos = ({ classNames, title, tasks }) => {
           )
         )
       ),
-      m.P(
+      mP(
         classes("pr3 flex items-center justify-center"),
         innerText("----- end of tasks -----")
       )

@@ -1,4 +1,4 @@
-import { eventKeys } from "./constants";
+import { eventKeys } from "../html/html-constants";
 import { effect } from "./signal";
 
 let elId = 0;

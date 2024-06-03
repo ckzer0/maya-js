@@ -1,4 +1,12 @@
-import { classes, derived, innerText, m, on, signal } from "../../lib";
+import { derived, signal } from "../../lib/core";
+import {
+  classes,
+  innerText,
+  mButton,
+  mDiv,
+  mH1,
+  onClick,
+} from "../../lib/html";
 import { GridBoard } from "./components/GridBoard";
 
 export const App = () => {
@@ -12,7 +20,6 @@ export const App = () => {
   const playerXsTurn = signal(true);
   const winner = signal(null);
   const winCombo = signal(null);
-  console.log("blankMoves", blankMoves);
   const moves = signal(blankMoves());
 
   const checkWin = () => {
@@ -62,10 +69,10 @@ export const App = () => {
     winCombo.value = null;
   };
 
-  return m.Div(
+  return mDiv(
     classes("ph4 mw6"),
-    m.H1(innerText("Tic Tac Toe")),
-    m.Div(
+    mH1(innerText("Tic Tac Toe")),
+    mDiv(
       classes(derived(() => `f2 mb1 ${playerXsTurn.value ? "green" : "pink"}`)),
       innerText(
         derived(
@@ -83,10 +90,10 @@ export const App = () => {
       winner,
       winCombo,
     }),
-    m.Button(
+    mButton(
       classes("mt3 bn pa3 b br3 pointer"),
       innerText("Restart"),
-      on.click(restartGame)
+      onClick(restartGame)
     )
   );
 };
