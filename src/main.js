@@ -1,13 +1,10 @@
-import { App } from "./view/appV1/app";
+import { App } from "./examples/todo/app";
+// import { App } from "./examples/tic-tac-toe/app";
 
 const runApp = () => {
-  const initialTodos = [
-    "saat baje hi uth gaye",
-    "nahana tha, parn nahaya nahi",
-    "khana thoos liya waise",
-    "ab kabhi nahi kochenge",
-  ];
-  document.body.appendChild(App({ todos: initialTodos }));
+  const app = App();
+  // console.log(app.innerHTML);
+  document.body.appendChild(app);
 };
 
 runApp();
