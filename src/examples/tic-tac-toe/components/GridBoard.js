@@ -1,32 +1,54 @@
-import { classes, m, on } from "../../../lib";
+import { classes, derived, m, on } from "../../../lib";
 
-const Block = ({ children, onclick }) => {
-  return m.Div(
-    classes(
-      "flex items-center justify-center tc br3 ba b--gray bg-white f1 b h5 pointer"
-    ),
-    on.click(onclick),
-    children
-  );
-};
-
-export const GridBoard = ({ firstPlayerTurn, moves, onMove }) => {
+export const GridBoard = ({
+  playerXsTurn,
+  moves,
+  onMove,
+  winner,
+  winCombo,
+}) => {
   const blocks = Array.from(Array(9).keys());
 
+  const getTextColor = (player) => (player === "X" ? "green" : "pink");
+  const getBgColor = (player) =>
+    player === "X" ? "bg-washed-green" : "bg-washed-pink";
+  const getColorsCss = (player) =>
+    `${getTextColor(player)} ${getBgColor(player)}`;
+
   return m.Div(
     classes(
-      firstPlayerTurn,
-      (s) => `grid3x3 pa4 bg-light-${s ? "green" : "pink"}`
+      derived(
+        () =>
+          `grid3x3 br4 pa4 ${
+            !winner.value
+              ? playerXsTurn.value
+                ? "bg-light-green"
+                : "bg-light-pink"
+              : "bg-moon-gray banned"
+          }`
+      )
     ),
-    ...blocks.map((_, index) => {
-      return Block({
-        children: [
-          moves,
-          (sigValue) =>
-            sigValue.find((move) => move.index === index)?.player || "•",
-        ],
-        onclick: () => onMove(index),
-      });
-    })
+    ...blocks.map((_, index) =>
+      m.Div(
+        classes(
+          derived(
+            () =>
+              `flex items-center justify-center tc br3 ba b--gray bg-white f1 b h5 ${
+                winner.value ? "banned" : "pointer"
+              } 
+              ${
+                winCombo.value?.includes(index)
+                  ? getColorsCss(winner.value)
+                  : ""
+              }
+              `
+          )
+        ),
+        on.click(() => onMove(index)),
+        derived(
+          () => moves.value.find((move) => move.index === index)?.player || "•"
+        )
+      )
+    )
   );
 };

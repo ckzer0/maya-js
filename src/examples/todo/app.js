@@ -1,7 +1,6 @@
-import { classes, m, on, attribs, signal } from "../../lib";
 import { Button, Header, TextBox } from "../../elements";
+import { classes, derived, m, signal } from "../../lib";
 import { Todos } from "./components";
-import { testAboveMethods } from "../../lib/diff";
 
 export const App = () => {
   const searchText = signal("");
@@ -11,13 +10,12 @@ export const App = () => {
     { text: "khana thoos liya waise", isDone: false },
     { text: "ab kabhi nahi kochenge", isDone: false },
   ]);
-  const tasksTitle = signal(`total taks: ${tasks().length}`);
+  const tasksTitle = derived(() => `total taks: ${tasks.value.length}`);
 
   const addTodo = () => {
-    if (searchText())
-      tasks.set([...tasks(), { text: searchText(), isDone: false }]);
-    searchText.set("");
-    tasksTitle.set(`total taks: ${tasks().length}`);
+    if (searchText.value)
+      tasks.value = [...tasks.value, { text: searchText.value, isDone: false }];
+    searchText.value = "";
   };
 
   return m.Div(
@@ -30,7 +28,7 @@ export const App = () => {
         value: searchText,
         onkeypress: (keyEvent) => {
           if (keyEvent.key === "Enter") addTodo();
-          else searchText.set(keyEvent.target.value + keyEvent.key);
+          else searchText.value = keyEvent.target.value + keyEvent.key;
         },
       }),
       Button({ onclick: addTodo, label: "add todo" })
