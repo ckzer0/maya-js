@@ -1,15 +1,14 @@
 import { Button, Header, TextBox } from "../../elements";
-import { derived, signal } from "../../lib/core";
-import { children, classes, mDiv } from "../../lib/html";
+import { derived, m, signal } from "../../lib";
 import { Todos } from "./components";
 
 export const App = () => {
   const searchText = signal("");
   const tasks = signal([
-    { text: "saat baje hi uth gaye", isDone: false },
-    { text: "nahana tha, parn nahaya nahi", isDone: false },
-    { text: "khana thoos liya waise", isDone: false },
-    { text: "ab kabhi nahi kochenge", isDone: false },
+    { text: "woke up @7 already", isDone: false },
+    { text: "was about to bathe, but skipped it", isDone: false },
+    { text: "devoured a lot of food", isDone: false },
+    { text: "I swear, won't eat that much again", isDone: false },
   ]);
   const tasksTitle = derived(() => `total taks: ${tasks.value.length}`);
 
@@ -19,13 +18,13 @@ export const App = () => {
     searchText.value = "";
   };
 
-  return mDiv(
-    classes("ph3"),
-    children(
+  return m.Div({
+    class: "ph3",
+    children: [
       Header({ title: "Todo App", variant: "large" }),
-      mDiv(
-        classes("mb2"),
-        children(
+      m.Div({
+        class: "mb2",
+        children: [
           TextBox({
             classNames: "mb2 mr3",
             value: searchText,
@@ -34,10 +33,10 @@ export const App = () => {
               else searchText.value = keyEvent.target.value + keyEvent.key;
             },
           }),
-          Button({ onTap: addTodo, label: "add todo" })
-        )
-      ),
-      Todos({ classNames: "mb3", title: tasksTitle, tasks })
-    )
-  );
+          Button({ onTap: addTodo, label: "add todo" }),
+        ],
+      }),
+      Todos({ classNames: "mb3", title: tasksTitle, tasks }),
+    ],
+  });
 };

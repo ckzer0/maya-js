@@ -1,7 +1,5 @@
-import { Button } from "../../elements";
-import { Loader } from "../../elements/loader";
-import { signal } from "../../lib/core";
-import { children, classes, innerText, mDiv, mH1, mSpan } from "../../lib/html";
+import { Button, Loader } from "../../elements";
+import { m, signal } from "../../lib";
 import { GridBoard } from "./components/GridBoard";
 
 export const App = () => {
@@ -49,7 +47,7 @@ export const App = () => {
       console.log("winner already declared");
       return;
     }
-    await delay();
+    await mockNewtorkLag();
     const newTurn = !playerXsTurn.value;
     const newMoves = [...moves.value];
 
@@ -60,11 +58,12 @@ export const App = () => {
     playerXsTurn.value = newTurn;
   };
 
-  const delay = async (ms = 300) => {
-    console.log("delaying for", ms, "ms");
+  const mockNewtorkLag = async (ms = 300) => {
+    console.log("processing on network...");
     isBusy.value = true;
     await new Promise((resolve) => setTimeout(resolve, ms));
     isBusy.value = false;
+    console.log("processing done.");
   };
 
   const restartGame = () => {
@@ -74,31 +73,37 @@ export const App = () => {
     winCombo.value = null;
   };
 
-  return mDiv(
-    classes("ph4 mw6"),
-    children(
-      mH1(innerText("Tic Tac Toe")),
-      mDiv(
-        classes("flex items-center"),
-        children(
-          mDiv(
-            classes(() => `f2 mb1 ${playerXsTurn.value ? "green" : "pink"}`),
-            innerText(
-              () =>
-                `${playerXsTurn.value ? "X" : "O"}${
-                  winner.value ? " won!!!" : "'s turn"
-                }`
-            )
-          ),
+  return m.Div({
+    class: "ph4 mw6",
+    children: [
+      m.H1({
+        innerText: "Tic Tac Toe",
+      }),
+      m.Div({
+        class: "flex items-center",
+        children: [
+          m.Div({
+            class: () => `f2 mb1 ${playerXsTurn.value ? "green" : "pink"}`,
+            innerText: () =>
+              `${playerXsTurn.value ? "X" : "O"}${
+                winner.value ? " won!!!" : "'s turn"
+              }`,
+          }),
           () =>
-            mSpan(
-              classes("ml3"),
-              children(() =>
-                isBusy.value ? Loader() : mSpan(innerText("✓"), classes("f2"))
-              )
-            )
-        )
-      ),
+            m.Span({
+              class: "ml3",
+              children: [
+                () =>
+                  isBusy.value
+                    ? Loader()
+                    : m.Span({
+                        class: "f2",
+                        innerText: "✓",
+                      }),
+              ],
+            }),
+        ],
+      }),
       GridBoard({
         playerXsTurn,
         moves,
@@ -107,10 +112,11 @@ export const App = () => {
         winCombo,
       }),
       Button({
-        colored: false,
-        label: "Restart",
+        classNames: "mt4",
+        color: "bg-gray white",
         onTap: restartGame,
-      })
-    )
-  );
+        label: "Restart",
+      }),
+    ],
+  });
 };

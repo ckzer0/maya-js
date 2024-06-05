@@ -1,17 +1,16 @@
-import { signal } from "../lib/core";
-import { classes, innerText, mH1, mH2, onClick } from "../lib/html";
+import { m, signal } from "../lib";
 
 export const Header = ({ title, variant }) => {
-  const hTag = variant === "large" ? mH1 : mH2;
+  const hTag = variant === "large" ? m.H1 : m.H2;
   const toggle = signal(false);
 
   const onTap = () => {
     toggle.value = !toggle.value;
   };
 
-  return hTag(
-    classes(() => `${toggle.value ? "pl3 red" : "pl3 black"}`),
-    onClick(onTap),
-    innerText(title)
-  );
+  return hTag({
+    class: () => `${toggle.value ? "pl3 red" : "pl3 black"}`,
+    onclick: onTap,
+    innerText: title,
+  });
 };

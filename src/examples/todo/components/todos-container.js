@@ -1,5 +1,5 @@
 import { Header } from "../../../elements";
-import { children, classes, innerText, mDiv, mP, mUl } from "../../../lib/html";
+import { m } from "../../../lib";
 import { TodoTile } from "./todo-tile";
 
 export const Todos = ({ classNames, title, tasks }) => {
@@ -13,17 +13,17 @@ export const Todos = ({ classNames, title, tasks }) => {
     tasks.value = updatedTasks;
   };
 
-  return mDiv(
-    classes(`border2-light rad15 ${classNames}`),
-    children(
+  return m.Div({
+    class: `border2-light rad15 ${classNames}`,
+    children: [
       Header({ title }),
-      mDiv(
-        classes(`pa3 m2 bcol-lgrey rad10`),
-        children(
+      m.Div({
+        class: `pa3 m2 bcol-lgrey rad10`,
+        children: [
           () =>
-            mUl(
-              classes("list pa1 ma0"),
-              children(
+            m.Ul({
+              class: "list pa1 ma0",
+              children: [
                 ...tasks.value.map((task, i) =>
                   TodoTile({
                     task: task.text,
@@ -33,15 +33,15 @@ export const Todos = ({ classNames, title, tasks }) => {
                     onDelete,
                     isLast: i === tasks.value.length - 1,
                   })
-                )
-              )
-            ),
-          mP(
-            classes("pr3 flex items-center justify-center"),
-            innerText("----- end of tasks -----")
-          )
-        )
-      )
-    )
-  );
+                ),
+              ],
+            }),
+          m.P({
+            class: "pr3 flex items-center justify-center",
+            innerText: "----- end of tasks -----",
+          }),
+        ],
+      }),
+    ],
+  });
 };
