@@ -28,7 +28,7 @@ export const PhotoFrame = Component(({ frameSrc, photoSrc, isBulbOn }) => {
             style: "height: 300px; width: 250px; ",
           }),
           m.Img({
-            class: "absolute--fill z-2",
+            class: "absolute--fill z-0",
             height: "250px",
             width: "250px",
             src: photoSrc.value,

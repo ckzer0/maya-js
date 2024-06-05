@@ -28,8 +28,7 @@ export const App = () => {
       }),
       console.log("line after Photo Frame is rendered"),
       m.Div({
-        class:
-          "absolute bottom-0 right-0 left-0 pa3 flex justify-center items-center",
+        class: "mt7 pt6 flex justify-center items-center",
         children: [
           Button({
             color: buttonColor,
