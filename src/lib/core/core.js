@@ -1,12 +1,10 @@
 import { eventKeys } from "../html/html-constants";
-import { effect } from "./signal";
+import { effect, valueIsSignal } from "./signal";
 
 let elId = 0;
 const getNewId = () => elId++;
 
 export const getProperty = (propKey, propValue) => ({ [propKey]: propValue });
-
-const valueIsSignal = (value) => !!(value?.type === "signal");
 
 const handleAttributeProps = (el, attributes) => {
   const attribSignals = [];
@@ -56,16 +54,22 @@ const handleChildrenProps = (el, children) => {
   };
 
   children.forEach((node, index) => {
+    const child = getNode(node);
+    if (!child) return;
+
     if (valueIsSignal(node)) {
       signalNodes.push({ index, node });
     }
-    el.appendChild(getNode(node));
+    el.appendChild(child);
   });
 
   if (signalNodes.length) {
     effect(() => {
       signalNodes.forEach(({ index, node }) => {
-        el.replaceChild(getNode(node.value), el.childNodes[index]);
+        const child = getNode(node.value);
+        if (!child) return;
+
+        el.replaceChild(child, el.childNodes[index]);
       });
     });
   }
@@ -89,6 +93,8 @@ const getNodesEventsAndAttributes = (...args) => {
   const attributes = {};
 
   args.forEach((arg) => {
+    if (!arg) return;
+
     if (arg.tagName || valueIsSignal(arg) || typeof arg === "string") {
       children.push(arg);
     } else {

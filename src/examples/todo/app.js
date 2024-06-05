@@ -32,7 +32,7 @@ export const App = () => {
           else searchText.value = keyEvent.target.value + keyEvent.key;
         },
       }),
-      Button({ onclick: addTodo, label: "add todo" })
+      Button({ onTap: addTodo, label: "add todo" })
     ),
     Todos({ classNames: "mb3", title: tasksTitle, tasks })
   );

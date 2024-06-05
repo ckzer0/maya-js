@@ -1,12 +1,7 @@
+import { Button } from "../../elements";
+import { Loader } from "../../elements/loader";
 import { derived, signal } from "../../lib/core";
-import {
-  classes,
-  innerText,
-  mButton,
-  mDiv,
-  mH1,
-  onClick,
-} from "../../lib/html";
+import { classes, innerText, mDiv, mH1, mSpan } from "../../lib/html";
 import { GridBoard } from "./components/GridBoard";
 
 export const App = () => {
@@ -21,6 +16,7 @@ export const App = () => {
   const winner = signal(null);
   const winCombo = signal(null);
   const moves = signal(blankMoves());
+  const isBusy = signal(false);
 
   const checkWin = () => {
     const winCombos = [
@@ -48,10 +44,12 @@ export const App = () => {
     }
   };
 
-  const onMove = (index) => {
+  const onMove = async (index) => {
     if (moves.value[index].player || winner.value) {
+      console.log("winner already declared");
       return;
     }
+    await delay();
     const newTurn = !playerXsTurn.value;
     const newMoves = [...moves.value];
 
@@ -60,6 +58,13 @@ export const App = () => {
     checkWin();
     if (winner.value) return;
     playerXsTurn.value = newTurn;
+  };
+
+  const delay = async (ms = 300) => {
+    console.log("delaying for", ms, "ms");
+    isBusy.value = true;
+    await new Promise((resolve) => setTimeout(resolve, ms));
+    isBusy.value = false;
   };
 
   const restartGame = () => {
@@ -73,13 +78,24 @@ export const App = () => {
     classes("ph4 mw6"),
     mH1(innerText("Tic Tac Toe")),
     mDiv(
-      classes(derived(() => `f2 mb1 ${playerXsTurn.value ? "green" : "pink"}`)),
-      innerText(
-        derived(
-          () =>
-            `${playerXsTurn.value ? "X" : "O"}${
-              winner.value ? " won!!!" : "'s turn"
-            }`
+      classes("flex items-center"),
+      mDiv(
+        classes(
+          derived(() => `f2 mb1 ${playerXsTurn.value ? "green" : "pink"}`)
+        ),
+        innerText(
+          derived(
+            () =>
+              `${playerXsTurn.value ? "X" : "O"}${
+                winner.value ? " won!!!" : "'s turn"
+              }`
+          )
+        )
+      ),
+      derived(() =>
+        mSpan(
+          classes("ml3"),
+          isBusy.value ? Loader() : mSpan(innerText("✓"), classes("f2"))
         )
       )
     ),
@@ -90,10 +106,10 @@ export const App = () => {
       winner,
       winCombo,
     }),
-    mButton(
-      classes("mt3 bn pa3 b br3 pointer"),
-      innerText("Restart"),
-      onClick(restartGame)
-    )
+    Button({
+      colored: false,
+      label: "Restart",
+      onTap: restartGame,
+    })
   );
 };

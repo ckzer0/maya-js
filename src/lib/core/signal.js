@@ -30,3 +30,5 @@ export const derived = (fn) => {
 
   return derivedSignal;
 };
+
+export const valueIsSignal = (value) => !!(value?.type === "signal");
