@@ -1,8 +1,15 @@
-import { classes, innerText, mButton, onClick } from "../lib/html";
+import { Component, m } from "../lib/html";
 
-export const Button = ({ onTap, label, colored = true }) =>
-  mButton(
-    classes(`mt3 bn pa3 b br3 pointer ${colored ? "bg-green white" : ""}`),
-    onClick(onTap),
-    innerText(label)
-  );
+let buttonRenderCount = 0;
+
+export const Button = Component(({ classNames, onTap, label, color }) => {
+  console.log(`Button rendered ${++buttonRenderCount} times`);
+  return m.Button({
+    class: () =>
+      `pa3 b br3 ba bw1 b--gray pointer ${color?.value || "bg-green  white"} ${
+        classNames?.value || ""
+      }`,
+    onclick: onTap,
+    innerText: label,
+  });
+});

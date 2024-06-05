@@ -1,2 +1,1 @@
-export * from "./html-components";
-export * from "./component-methods";
+export * from "./components";

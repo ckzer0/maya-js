@@ -1,16 +1,31 @@
-import { eventKeys } from "../html/html-constants";
-import { effect, valueIsSignal } from "./signal";
+import { eventKeys } from "../html/constants";
+import { derived, effect, valueIsSignal } from "./signal";
 
 let elId = 0;
 const getNewId = () => elId++;
 
-export const getProperty = (propKey, propValue) => ({ [propKey]: propValue });
+const getPropValue = (prop) => {
+  if (typeof prop === "string" || valueIsSignal(prop)) return prop;
+
+  if (typeof prop === "function") {
+    const signalledProp = derived(prop);
+    return signalledProp;
+  }
+
+  console.log(typeof prop, prop);
+  throw new Error(
+    "prop passed in component should be only string, object or function"
+  );
+};
+
+const attributeIsEvent = (attrKey, attrValue) =>
+  eventKeys.includes(attrKey) && typeof attrValue === "function";
 
 const handleAttributeProps = (el, attributes) => {
-  const attribSignals = [];
+  const attribSignals = {};
+
   const getAttrValue = (attrValue) =>
     valueIsSignal(attrValue) ? getAttrValue(attrValue.value) : attrValue;
-
   const setAttribute = (el, attrKey, attrValue) => {
     if (attrKey === "value") {
       el.value = getAttrValue(attrValue);
@@ -20,21 +35,22 @@ const handleAttributeProps = (el, attributes) => {
   };
 
   Object.entries(attributes).forEach((attrib) => {
-    const [attrKey, attrValue] = attrib;
+    const [attrKey, attrVal] = attrib;
+    const attrValue = getPropValue(attrVal);
     if (eventKeys.includes(attrKey) && typeof attrValue === "function")
       throw new Error(
         "event handler method should not be assigned inside attributes"
       );
 
     if (valueIsSignal(attrValue)) {
-      attribSignals.push(attrib);
+      attribSignals[attrKey] = attrValue;
     } else {
       setAttribute(el, attrKey, attrValue);
     }
   });
 
   effect(() => {
-    attribSignals.forEach(([attrKey, attrValue]) => {
+    Object.entries(attribSignals).forEach(([attrKey, attrValue]) => {
       setAttribute(el, attrKey, attrValue);
     });
   });
@@ -54,11 +70,12 @@ const handleChildrenProps = (el, children) => {
   };
 
   children.forEach((node, index) => {
-    const child = getNode(node);
+    const sanitisedNode = typeof node === "function" ? derived(node) : node;
+    const child = getNode(sanitisedNode);
     if (!child) return;
 
-    if (valueIsSignal(node)) {
-      signalNodes.push({ index, node });
+    if (valueIsSignal(sanitisedNode)) {
+      signalNodes.push({ index, node: sanitisedNode });
     }
     el.appendChild(child);
   });
@@ -87,61 +104,38 @@ const handleEventProps = (el, events) => {
   });
 };
 
-const getNodesEventsAndAttributes = (...args) => {
+const getNodesEventsAndAttributes = (props) => {
   const children = [];
   const events = {};
   const attributes = {};
 
-  args.forEach((arg) => {
-    if (!arg) return;
-
-    if (typeof arg === "object") {
-      const entries = Object.entries(arg);
-      if (entries.length === 1) {
-        const [propKey, propValue] = entries[0];
-
-        if (propKey === "innerText") {
-          children.push(propValue);
-        } else if (propKey === "children") {
-          children.push(...propValue);
-        } else if (propKey === "classes") {
-          Object.assign(attributes, { class: propValue });
-        } else if (propKey === "style") {
-          Object.assign(attributes, { style: propValue });
-        } else if (propKey === "attribs") {
-          Object.assign(attributes, propValue);
-        } else if (propKey === "event") {
-          const [eventKey, eventValue] = Object.entries(propValue)[0];
-          if (
-            eventKeys.includes(eventKey) &&
-            typeof eventValue === "function"
-          ) {
-            Object.assign(events, propValue);
-          } else {
-            throw new Error("Invalid event");
-          }
-        } else {
-          throw new Error("Invalid attribute or event");
-        }
-      } else {
-        throw new Error("Attribute length is greater than 1");
-      }
+  Object.entries(props).forEach(([propKey, propValue]) => {
+    if (propKey === "innerText") {
+      children.push(propValue);
+    } else if (propKey === "children") {
+      children.push(...propValue);
+    } else if (attributeIsEvent(propKey, propValue)) {
+      events[propKey] = propValue;
     } else {
-      throw new Error("Invalid prop passed to maya node");
+      attributes[propKey] = propValue;
     }
   });
 
   return { children, events, attributes };
 };
 
-export const createEl = (tagName, ...args) => {
+export const createEl = (tagName, props) => {
   const el = document.createElement(tagName);
   el.mayaId = getNewId();
 
-  const { children, events, attributes } = getNodesEventsAndAttributes(...args);
+  // console.log("\n");
+  // console.log(el.tagName);
+  const { children, events, attributes } = getNodesEventsAndAttributes(props);
   handleAttributeProps(el, attributes);
   handleChildrenProps(el, children);
   handleEventProps(el, events);
+  // console.log("----------------------");
+  // console.log("\n\n");
 
   return el;
 };

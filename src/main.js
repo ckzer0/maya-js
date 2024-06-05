@@ -1,10 +1,10 @@
-import { App } from "./examples/todo/app";
-// import { App } from "./examples/tic-tac-toe/app";
+import { App as LivingRoomApp } from "./examples/living-room/app";
+import { App as TicTacToeApp } from "./examples/tic-tac-toe/app";
+import { App as TodoApp } from "./examples/todo/app";
 
 const runApp = () => {
-  const app = App();
-  // console.log(app.innerHTML);
-  document.body.appendChild(app);
+  const apps = { LivingRoomApp, TicTacToeApp, TodoApp };
+  document.body.appendChild(apps.TodoApp());
 };
 
 runApp();

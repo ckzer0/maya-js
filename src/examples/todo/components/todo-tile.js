@@ -1,14 +1,4 @@
-import { signal } from "../../../lib/core";
-import {
-  children,
-  classes,
-  innerText,
-  mButton,
-  mDiv,
-  mSpan,
-  onClick,
-  style,
-} from "../../../lib/html";
+import { m, signal } from "../../../lib";
 
 export const TodoTile = ({
   index,
@@ -24,27 +14,30 @@ export const TodoTile = ({
   const getTitleClass = () =>
     `mt1 pa2 pointer ${!isDone ? bgColor.value + " dark-green" : ""}`;
 
-  return mDiv(
-    classes(getTitleClass),
-    style(`${isLast ? plainStyle : styleWithBorder}`),
-    onClick(() => {
+  return m.Div({
+    class: getTitleClass,
+    style: `${isLast ? plainStyle : styleWithBorder}`,
+    onclick: () => {
       onDoneChange(index);
       bgColor.value =
         bgColor.value === "bg-light-yellow"
           ? "bg-light-transparent"
           : "bg-light-yellow";
-    }),
-    children(
-      mSpan(classes(isDone ? "strike" : ""), innerText(task)),
-      mButton(
-        classes(`mb1`),
-        style(`display: inline-block;`),
-        onClick((e) => {
+    },
+    children: [
+      m.Span({
+        class: isDone ? "strike" : "",
+        innerText: task,
+      }),
+      m.Button({
+        class: `mb1`,
+        style: `display: inline-block;`,
+        onclick: (e) => {
           onDelete(index);
           e.stopPropagation();
-        }),
-        innerText("x")
-      )
-    )
-  );
+        },
+        innerText: "x",
+      }),
+    ],
+  });
 };
