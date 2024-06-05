@@ -1,6 +1,6 @@
 import { Button, Header, TextBox } from "../../elements";
 import { derived, signal } from "../../lib/core";
-import { classes, mDiv } from "../../lib/html";
+import { children, classes, mDiv } from "../../lib/html";
 import { Todos } from "./components";
 
 export const App = () => {
@@ -21,19 +21,23 @@ export const App = () => {
 
   return mDiv(
     classes("ph3"),
-    Header({ title: "Todo App", variant: "large" }),
-    mDiv(
-      classes("mb2"),
-      TextBox({
-        classNames: "mb2 mr3",
-        value: searchText,
-        onkeypress: (keyEvent) => {
-          if (keyEvent.key === "Enter") addTodo();
-          else searchText.value = keyEvent.target.value + keyEvent.key;
-        },
-      }),
-      Button({ onTap: addTodo, label: "add todo" })
-    ),
-    Todos({ classNames: "mb3", title: tasksTitle, tasks })
+    children(
+      Header({ title: "Todo App", variant: "large" }),
+      mDiv(
+        classes("mb2"),
+        children(
+          TextBox({
+            classNames: "mb2 mr3",
+            value: searchText,
+            onkeypress: (keyEvent) => {
+              if (keyEvent.key === "Enter") addTodo();
+              else searchText.value = keyEvent.target.value + keyEvent.key;
+            },
+          }),
+          Button({ onTap: addTodo, label: "add todo" })
+        )
+      ),
+      Todos({ classNames: "mb3", title: tasksTitle, tasks })
+    )
   );
 };

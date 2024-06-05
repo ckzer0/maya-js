@@ -1,5 +1,6 @@
-import { derived, signal } from "../../../lib/core";
+import { signal } from "../../../lib/core";
 import {
+  children,
   classes,
   innerText,
   mButton,
@@ -20,12 +21,11 @@ export const TodoTile = ({
   const plainStyle = "display: flex; justify-content: space-between;";
   const styleWithBorder = `${plainStyle} border-bottom: 1px solid #ddd;`;
   const bgColor = signal("bg-light-transparent");
-  const tileClasses = derived(
-    () => `mt1 pa2 pointer ${!isDone ? bgColor.value + " dark-green" : ""}`
-  );
+  const getTitleClass = () =>
+    `mt1 pa2 pointer ${!isDone ? bgColor.value + " dark-green" : ""}`;
 
   return mDiv(
-    classes(tileClasses),
+    classes(getTitleClass),
     style(`${isLast ? plainStyle : styleWithBorder}`),
     onClick(() => {
       onDoneChange(index);
@@ -34,15 +34,17 @@ export const TodoTile = ({
           ? "bg-light-transparent"
           : "bg-light-yellow";
     }),
-    mSpan(classes(isDone ? "strike" : ""), innerText(task)),
-    mButton(
-      classes(`mb1`),
-      style(`display: inline-block;`),
-      onClick((e) => {
-        onDelete(index);
-        e.stopPropagation();
-      }),
-      innerText("x")
+    children(
+      mSpan(classes(isDone ? "strike" : ""), innerText(task)),
+      mButton(
+        classes(`mb1`),
+        style(`display: inline-block;`),
+        onClick((e) => {
+          onDelete(index);
+          e.stopPropagation();
+        }),
+        innerText("x")
+      )
     )
   );
 };

@@ -95,39 +95,39 @@ const getNodesEventsAndAttributes = (...args) => {
   args.forEach((arg) => {
     if (!arg) return;
 
-    if (arg.tagName || valueIsSignal(arg) || typeof arg === "string") {
-      children.push(arg);
-    } else {
-      if (typeof arg === "object") {
-        const entries = Object.entries(arg);
-        if (entries.length === 1) {
-          const [propKey, propValue] = entries[0];
+    if (typeof arg === "object") {
+      const entries = Object.entries(arg);
+      if (entries.length === 1) {
+        const [propKey, propValue] = entries[0];
 
-          if (propKey === "classes") {
-            Object.assign(attributes, { class: propValue });
-          } else if (propKey === "style") {
-            Object.assign(attributes, { style: propValue });
-          } else if (propKey === "attribs") {
-            Object.assign(attributes, propValue);
-          } else if (propKey === "event") {
-            const [eventKey, eventValue] = Object.entries(propValue)[0];
-            if (
-              eventKeys.includes(eventKey) &&
-              typeof eventValue === "function"
-            ) {
-              Object.assign(events, propValue);
-            } else {
-              throw new Error("Invalid event");
-            }
+        if (propKey === "innerText") {
+          children.push(propValue);
+        } else if (propKey === "children") {
+          children.push(...propValue);
+        } else if (propKey === "classes") {
+          Object.assign(attributes, { class: propValue });
+        } else if (propKey === "style") {
+          Object.assign(attributes, { style: propValue });
+        } else if (propKey === "attribs") {
+          Object.assign(attributes, propValue);
+        } else if (propKey === "event") {
+          const [eventKey, eventValue] = Object.entries(propValue)[0];
+          if (
+            eventKeys.includes(eventKey) &&
+            typeof eventValue === "function"
+          ) {
+            Object.assign(events, propValue);
           } else {
-            throw new Error("Invalid attribute or event");
+            throw new Error("Invalid event");
           }
         } else {
-          throw new Error("Attribute length is greater than 1");
+          throw new Error("Invalid attribute or event");
         }
       } else {
-        throw new Error("Invalid prop passed to maya node");
+        throw new Error("Attribute length is greater than 1");
       }
+    } else {
+      throw new Error("Invalid prop passed to maya node");
     }
   });
 

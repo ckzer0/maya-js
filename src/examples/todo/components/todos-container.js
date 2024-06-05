@@ -1,6 +1,5 @@
 import { Header } from "../../../elements";
-import { derived } from "../../../lib/core";
-import { classes, innerText, mDiv, mP, mUl } from "../../../lib/html";
+import { children, classes, innerText, mDiv, mP, mUl } from "../../../lib/html";
 import { TodoTile } from "./todo-tile";
 
 export const Todos = ({ classNames, title, tasks }) => {
@@ -16,27 +15,32 @@ export const Todos = ({ classNames, title, tasks }) => {
 
   return mDiv(
     classes(`border2-light rad15 ${classNames}`),
-    Header({ title }),
-    mDiv(
-      classes(`pa3 m2 bcol-lgrey rad10`),
-      derived(() =>
-        mUl(
-          classes("list pa1 ma0"),
-          ...tasks.value.map((task, i) =>
-            TodoTile({
-              task: task.text,
-              index: i,
-              isDone: task.isDone,
-              onDoneChange,
-              onDelete,
-              isLast: i === tasks.value.length - 1,
-            })
+    children(
+      Header({ title }),
+      mDiv(
+        classes(`pa3 m2 bcol-lgrey rad10`),
+        children(
+          () =>
+            mUl(
+              classes("list pa1 ma0"),
+              children(
+                ...tasks.value.map((task, i) =>
+                  TodoTile({
+                    task: task.text,
+                    index: i,
+                    isDone: task.isDone,
+                    onDoneChange,
+                    onDelete,
+                    isLast: i === tasks.value.length - 1,
+                  })
+                )
+              )
+            ),
+          mP(
+            classes("pr3 flex items-center justify-center"),
+            innerText("----- end of tasks -----")
           )
         )
-      ),
-      mP(
-        classes("pr3 flex items-center justify-center"),
-        innerText("----- end of tasks -----")
       )
     )
   );

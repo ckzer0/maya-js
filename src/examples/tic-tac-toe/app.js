@@ -1,7 +1,7 @@
 import { Button } from "../../elements";
 import { Loader } from "../../elements/loader";
-import { derived, signal } from "../../lib/core";
-import { classes, innerText, mDiv, mH1, mSpan } from "../../lib/html";
+import { signal } from "../../lib/core";
+import { children, classes, innerText, mDiv, mH1, mSpan } from "../../lib/html";
 import { GridBoard } from "./components/GridBoard";
 
 export const App = () => {
@@ -76,40 +76,41 @@ export const App = () => {
 
   return mDiv(
     classes("ph4 mw6"),
-    mH1(innerText("Tic Tac Toe")),
-    mDiv(
-      classes("flex items-center"),
+    children(
+      mH1(innerText("Tic Tac Toe")),
       mDiv(
-        classes(
-          derived(() => `f2 mb1 ${playerXsTurn.value ? "green" : "pink"}`)
-        ),
-        innerText(
-          derived(
-            () =>
-              `${playerXsTurn.value ? "X" : "O"}${
-                winner.value ? " won!!!" : "'s turn"
-              }`
-          )
+        classes("flex items-center"),
+        children(
+          mDiv(
+            classes(() => `f2 mb1 ${playerXsTurn.value ? "green" : "pink"}`),
+            innerText(
+              () =>
+                `${playerXsTurn.value ? "X" : "O"}${
+                  winner.value ? " won!!!" : "'s turn"
+                }`
+            )
+          ),
+          () =>
+            mSpan(
+              classes("ml3"),
+              children(() =>
+                isBusy.value ? Loader() : mSpan(innerText("✓"), classes("f2"))
+              )
+            )
         )
       ),
-      derived(() =>
-        mSpan(
-          classes("ml3"),
-          isBusy.value ? Loader() : mSpan(innerText("✓"), classes("f2"))
-        )
-      )
-    ),
-    GridBoard({
-      playerXsTurn,
-      moves,
-      onMove,
-      winner,
-      winCombo,
-    }),
-    Button({
-      colored: false,
-      label: "Restart",
-      onTap: restartGame,
-    })
+      GridBoard({
+        playerXsTurn,
+        moves,
+        onMove,
+        winner,
+        winCombo,
+      }),
+      Button({
+        colored: false,
+        label: "Restart",
+        onTap: restartGame,
+      })
+    )
   );
 };
