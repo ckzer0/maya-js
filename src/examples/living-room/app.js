@@ -8,8 +8,6 @@ export const App = () => {
   const buttonColor = derived(() =>
     isBulbOn.value ? "bg-light-gray black" : "bg-mid-gray light-gray"
   );
-  var mario = document.createElement("img");
-  mario.src = "assets/images/Mario.jpg";
 
   return m.Div({
     class: () =>
@@ -26,7 +24,6 @@ export const App = () => {
         frameSrc: "sample-assets/photo-frame.webp",
         photoSrc: "sample-assets/pp.png",
       }),
-      console.log("line after Photo Frame is rendered"),
       m.Div({
         class: "mt7 pt6 flex justify-center items-center",
         children: [

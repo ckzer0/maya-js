@@ -1,6 +1,10 @@
 import { Component, m } from "../../../lib";
 
+let photFrameRenderCount = 0;
+
 export const PhotoFrame = Component(({ frameSrc, photoSrc, isBulbOn }) => {
+  console.log(`photo frame rendered ${++photFrameRenderCount} times`);
+
   return m.Div({
     class: "flex justify-center",
     children: [

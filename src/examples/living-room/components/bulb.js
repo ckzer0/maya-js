@@ -18,7 +18,7 @@ export const Bulb = Component(({ isOn, classNames }) => {
           `flex items-center yellow justify-center w4 h5 pv5 br-100 ${
             isOn.value ? "bg-washed-yellow" : "bg-black"
           }`,
-        innerText: "filament",
+        innerText: "फिलामेंट",
       }),
     ],
   });

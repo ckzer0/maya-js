@@ -4,7 +4,7 @@ import { App as TodoApp } from "./examples/todo/app";
 
 const runApp = () => {
   const apps = { LivingRoomApp, TicTacToeApp, TodoApp };
-  document.body.appendChild(apps.LivingRoomApp());
+  document.body.appendChild(apps.TodoApp());
 };
 
 runApp();
